@@ -1,0 +1,17 @@
+body { font-family: Arial, sans-serif; margin: 30px; }
+table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+th { background: #f2f2f2; }
+form { max-width: 500px; }
+label { display: block; margin-top: 12px; }
+input[type=text], textarea { width: 100%; padding: 8px; margin-top: 4px; }
+.btn { display: inline-block; padding: 6px 12px; text-decoration: none; border: 1px solid #333; border-radius: 4px; color: #000; }
+.btn-primary { background: #007bff; color: #fff; border-color: #007bff; cursor: pointer; }
+.btn-success { background: #28a745; color: #fff; border-color: #28a745; cursor: pointer; }
+.btn-danger { background: #dc3545; color: #fff; border-color: #dc3545; cursor: pointer; }
+.msg { background: #d4edda; padding: 10px; border-radius: 4px; margin: 10px 0; }
+.err { background: #f8d7da; padding: 10px; border-radius: 4px; margin: 10px 0; }
+.actions a { margin-right: 6px; }
+.status { color: green; font-size: 0.9em; }
+.box { max-width: 500px; border: 1px solid #ccc; padding: 20px; border-radius: 6px; }
+.mt { margin-top: 14px; }
