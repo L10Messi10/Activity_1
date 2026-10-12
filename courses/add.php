@@ -26,32 +26,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Insert failed.';
         } else {
             sqlsrv_free_stmt($stmt);
-            header('Location: ../index.php?msg=' . urlencode('Course added successfully.'));
+            header('Location: index.php?msg=' . urlencode('Course added successfully.'));
             exit;
         }
     }
 }
 
 $title = 'Add Course';
+$active = 'courses';
 require dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <h1>Add New Course</h1>
-<p><a href="../index.php">&larr; Back to list</a></p>
+<p><a href="index.php">&larr; Back to list</a></p>
 
 <?php if ($error): ?>
-    <div class="err"><?= e($error) ?><?php if ($error === 'Insert failed.') print_r(sqlsrv_errors()); ?></div>
+    <div class="alert alert-danger"><?= e($error) ?><?php if ($error === 'Insert failed.') print_r(sqlsrv_errors()); ?></div>
 <?php endif; ?>
 
-<form method="post" action="add.php">
-    <label>Course Name (required, max 250):
-        <input type="text" name="course_name" maxlength="250" required value="<?= e($course_name) ?>">
-    </label>
-    <label>Description (optional, max 1000):
-        <textarea name="course_description" rows="4" maxlength="1000"><?= e($course_description) ?></textarea>
-    </label>
-    <button class="btn btn-primary mt" type="submit">Save</button>
-    <a class="btn mt" href="../index.php">Cancel</a>
+<form method="post" action="add.php" class="form-narrow">
+    <div class="mb-3">
+        <label class="form-label" for="course_name">Course Name (required, max 250):</label>
+        <input class="form-control" type="text" id="course_name" name="course_name" maxlength="250" required value="<?= e($course_name) ?>">
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="course_description">Description (optional, max 1000):</label>
+        <textarea class="form-control" id="course_description" name="course_description" rows="4" maxlength="1000"><?= e($course_description) ?></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+    <a class="btn btn-secondary" href="index.php">Cancel</a>
 </form>
 
 <?php require dirname(__DIR__) . '/includes/footer.php'; ?>

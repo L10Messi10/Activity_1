@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Update failed.';
         } else {
             sqlsrv_free_stmt($stmt);
-            header('Location: ../index.php?msg=' . urlencode('Course updated successfully.'));
+            header('Location: index.php?msg=' . urlencode('Course updated successfully.'));
             exit;
         }
     }
@@ -53,26 +53,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $title = 'Edit Course #' . $course['course_id'];
+$active = 'courses';
 require dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <h1>Edit Course #<?= e($course['course_id']) ?></h1>
-<p><a href="../index.php">&larr; Back to list</a></p>
+<p><a href="index.php">&larr; Back to list</a></p>
 
 <?php if ($error): ?>
-    <div class="err"><?= e($error) ?><?php if ($error === 'Update failed.') print_r(sqlsrv_errors()); ?></div>
+    <div class="alert alert-danger"><?= e($error) ?><?php if ($error === 'Update failed.') print_r(sqlsrv_errors()); ?></div>
 <?php endif; ?>
 
-<form method="post" action="edit.php?id=<?= e($course['course_id']) ?>">
+<form method="post" action="edit.php?id=<?= e($course['course_id']) ?>" class="form-narrow">
     <input type="hidden" name="id" value="<?= e($course['course_id']) ?>">
-    <label>Course Name (required, max 250):
-        <input type="text" name="course_name" maxlength="250" required value="<?= e($course['course_name']) ?>">
-    </label>
-    <label>Description (optional, max 1000):
-        <textarea name="course_description" rows="4" maxlength="1000"><?= e($course['course_description']) ?></textarea>
-    </label>
-    <button class="btn btn-success mt" type="submit">Update</button>
-    <a class="btn mt" href="../index.php">Cancel</a>
+    <div class="mb-3">
+        <label class="form-label" for="course_name">Course Name (required, max 250):</label>
+        <input class="form-control" type="text" id="course_name" name="course_name" maxlength="250" required value="<?= e($course['course_name']) ?>">
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="course_description">Description (optional, max 1000):</label>
+        <textarea class="form-control" id="course_description" name="course_description" rows="4" maxlength="1000"><?= e($course['course_description']) ?></textarea>
+    </div>
+    <button class="btn btn-success" type="submit">Update</button>
+    <a class="btn btn-secondary" href="index.php">Cancel</a>
 </form>
 
 <?php require dirname(__DIR__) . '/includes/footer.php'; ?>

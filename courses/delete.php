@@ -9,9 +9,7 @@ if (!$id) {
 if (!$id) {
     die('Invalid course ID.');
 }
-
 $error = '';
-
 // Confirm delete on POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sql = "DELETE FROM course WHERE course_id = ?";
@@ -24,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($rows === false || $rows === 0) {
             $error = 'Course not found or already deleted.';
         } else {
-            header('Location: ../index.php?msg=' . urlencode('Course deleted successfully.'));
+            header('Location: index.php?msg=' . urlencode('Course deleted successfully.'));
             exit;
         }
     }
@@ -43,14 +41,16 @@ if (!$course) {
 }
 
 $title = 'Delete Course';
+$active = 'courses';
 require dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <h1>Delete Course</h1>
 
-<div class="box">
+<div class="card form-narrow">
+  <div class="card-body">
     <?php if ($error): ?>
-        <div class="err"><?= e($error) ?></div>
+        <div class="alert alert-danger"><?= e($error) ?></div>
     <?php endif; ?>
     <p>Are you sure you want to delete this course?</p>
     <p><strong>#<?= e($course['course_id']) ?> — <?= e($course['course_name']) ?></strong></p>
@@ -58,9 +58,10 @@ require dirname(__DIR__) . '/includes/header.php';
 
     <form method="post" action="delete.php?id=<?= e($course['course_id']) ?>" onsubmit="return confirm('Confirm delete?');">
         <input type="hidden" name="id" value="<?= e($course['course_id']) ?>">
-        <button class="btn btn-danger mt" type="submit">Yes, Delete</button>
-        <a class="btn mt" href="../index.php">Cancel</a>
+        <button class="btn btn-danger" type="submit">Yes, Delete</button>
+        <a class="btn btn-secondary" href="index.php">Cancel</a>
     </form>
+  </div>
 </div>
 
 <?php require dirname(__DIR__) . '/includes/footer.php'; ?>
