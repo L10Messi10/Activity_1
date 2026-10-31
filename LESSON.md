@@ -6,6 +6,8 @@ Simple lesson for beginners. You will learn how to Connect, Create, Read, Update
 
 CRUD = 4 basic jobs for any data:
 
+Good morning everyone!
+
 - **C** = Create — add new row. Example: add `BSIT`
 - **R** = Read — show rows. Example: list all courses
 - **U** = Update — change a row. Example: rename `BSBA` to `BSBA-MM`
@@ -34,7 +36,58 @@ Start Apache in XAMPP, then open:
 http://localhost/Activity_1/index.php
 ```
 
-## 3. Folder structure
+## 3. Authentication (Signup / Login / Logout)
+
+Before using CRUD, you must set up the `users` table and create an account.
+
+### 3.1 Create the users table (run once)
+
+Visit:
+
+```
+http://localhost/Activity_1/setup_users.php
+```
+
+This creates a `users` table in `StudentDB_BSIT_A`:
+
+| Column | Type | Rule |
+|---|---|---|
+| `user_id` | int, IDENTITY | Primary key |
+| `username` | varchar(50) | Required, unique |
+| `email` | varchar(100) | Required, unique |
+| `password_hash` | varchar(255) | Required, bcrypt hash |
+| `full_name` | varchar(100) | Optional |
+| `created_at` | datetime | Auto `GETDATE()` |
+| `is_active` | bit | Default 1 |
+
+### 3.2 Sign up
+
+Go to `auth/signup.php`. The form validates:
+- Username: 3–50 chars, letters/numbers/underscore only, unique
+- Email: valid format, unique
+- Password: minimum 8 characters, must match confirmation
+
+Passwords are hashed with PHP's `password_hash()` (PASSWORD_DEFAULT / bcrypt) before storage. Plain passwords are **never** saved.
+
+### 3.3 Log in
+
+Go to `auth/login.php`. Uses `password_verify()` to check the hashed password. On success, a PHP session is created and you're redirected back to the page you were trying to visit.
+
+### 3.4 Log out
+
+Click **Log out** in the navbar (or visit `auth/logout.php`). The session is destroyed and you're sent back to the landing page.
+
+### 3.5 Navbar behavior
+
+`includes/header.php` is auth-aware:
+- **Logged out:** shows Home, Courses, Students, Log in, Sign up
+- **Logged in:** shows Home, Courses, Students, your username, Log out
+
+### 3.6 CRUD requires login
+
+All pages under `courses/` call `requireLogin()` at the top. If you're not logged in, you're redirected to `auth/login.php`. After logging in, you return to the original page.
+
+## 4. Folder structure
 
 We keep files grouped so it is easy to find things.
 `index.php` is now a **landing page**. The Course list moved to `courses/index.php`:
@@ -43,18 +96,24 @@ We keep files grouped so it is easy to find things.
 Activity_1/
   .env                  Secret settings, DO NOT share
   index.php             Landing page (Home with links to Courses + Students)
+  setup_users.php       Run once to create the users table
   config/
     db.php              Connect to SQL Server using .env
+  auth/                 Authentication (signup, login, logout)
+    signup.php          Registration with password_hash()
+    login.php           Login with password_verify() + session
+    logout.php          Destroy session
   courses/              Reference CRUD — already done, use as pattern
-    index.php           R = list all courses
-    add.php             C = add form + INSERT
-    edit.php            U = edit form + UPDATE
-    delete.php          D = confirm + DELETE
+    index.php           R = list all courses (requires login)
+    add.php             C = add form + INSERT (requires login)
+    edit.php            U = edit form + UPDATE (requires login)
+    delete.php          D = confirm + DELETE (requires login)
   students/             NOT provided — YOU must create this (see §13)
   includes/
-    header.php          Top HTML + navbar + CSS link
+    header.php          Top HTML + navbar + CSS link (auth-aware)
     footer.php          Bottom HTML + footer
     functions.php       Helper e() and fmtDate()
+    auth.php            Auth helpers (isLoggedIn, requireLogin, etc.)
   assets/
     css/bootstrap.min.css  Bootstrap framework (loaded first)
     css/style.css       Custom extras on top of Bootstrap
@@ -70,7 +129,7 @@ Rule to remember:
 - `includes/` = reused parts (header/footer auto-adds navbar)
 - `assets/` = design only
 
-## 4. Step 1: Connect with `.env`
+## 5. Step 1: Connect with `.env`
 
 `.env` holds secrets outside your code. Example only — use your own values:
 
@@ -107,7 +166,7 @@ require_once dirname(__DIR__) . '/config/db.php';
 If you see `.env file not found`, your path to `.env` is wrong.
 If you see login error, check `DB_SERVER`, `DB_UID`, `DB_PWD`.
 
-## 5. Step 2: Read — `courses/index.php`
+## 6. Step 2: Read — `courses/index.php`
 
 Read = `SELECT`. This lists newest first (file lives in `courses/`, opened via landing page):
 
@@ -137,7 +196,7 @@ Links in the table (all inside `courses/` now):
 - Delete: `courses/delete.php?id=1` (link `delete.php?id=1`)
 - Landing: `index.php` root links to `courses/index.php` and `students/index.php`
 
-## 6. Step 3: Create — `courses/add.php`
+## 7. Step 3: Create — `courses/add.php`
 
 Create = `INSERT`. Flow:
 
@@ -166,7 +225,7 @@ Form basics:
 </form>
 ```
 
-## 7. Step 4: Update — `courses/edit.php`
+## 8. Step 4: Update — `courses/edit.php`
 
 Update = `UPDATE ... WHERE`. Flow:
 
@@ -191,7 +250,7 @@ $stmt = sqlsrv_query($conn, $sql, $params);
 
 Always keep `WHERE course_id = ?`. Without `WHERE`, you update ALL rows.
 
-## 8. Step 5: Delete — `courses/delete.php`
+## 9. Step 5: Delete — `courses/delete.php`
 
 Delete = `DELETE ... WHERE`. Flow:
 
@@ -206,7 +265,7 @@ header('Location: index.php?msg=Course deleted successfully.');
 
 Same rule: always keep `WHERE`. Test delete with a test row first.
 
-## 9. How to use this project
+## 10. How to use this project
 
 1. Start XAMPP Apache
 2. Open landing page `http://localhost/Activity_1/index.php`
@@ -219,9 +278,9 @@ Same rule: always keep `WHERE`. Test delete with a test row first.
 6. Click **Edit** on that row, change description, Update
 7. Click **Delete** on that test row, confirm Yes
 8. Click **Home** in navbar to return to landing page
-9. Done — you just did full Course CRUD. Students CRUD is your task (§13).
+9. Done — you just did full Course CRUD. Students CRUD is your task (§14).
 
-## 10. Common errors
+## 11. Common errors
 
 | Error | Fix |
 |---|---|
@@ -232,7 +291,7 @@ Same rule: always keep `WHERE`. Test delete with a test row first.
 | CSS not loading | Keep both `<link>`s in `includes/header.php`: `bootstrap.min.css` first, then `style.css` |
 | Updated all rows | You forgot `WHERE course_id = ?` |
 
-## 11. Safety checklist
+## 12. Safety checklist
 
 - Use `?` params in every SQL with user input
 - Use `e()` when echoing database or `$_POST`/`$_GET`
@@ -240,7 +299,7 @@ Same rule: always keep `WHERE`. Test delete with a test row first.
 - Check `id` with `FILTER_VALIDATE_INT`
 - Never commit real `.env` password to GitHub
 
-## 12. Try yourself (5 min each)
+## 13. Try yourself (5 min each)
 
 1. Add course `BEED` with description, find it in list
 2. Edit `BEED` description, confirm change stays after refresh
@@ -250,7 +309,7 @@ Same rule: always keep `WHERE`. Test delete with a test row first.
 
 You now know the full cycle: `.env` -> `db.php` -> `SELECT` / `INSERT` / `UPDATE` / `DELETE`.
 
-## 13. Assignment: Students CRUD — YOU must provide the working code
+## 14. Assignment: Students CRUD — YOU must provide the working code
 
 > **NOTE: No starter code is provided for `students/`. Students must provide the working code for the Students CRUD themselves. Copy the `courses/` pattern, do not copy-paste blindly — adapt it to the `Students` table.**
 

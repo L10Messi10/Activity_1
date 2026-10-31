@@ -1,6 +1,9 @@
 <?php
 require_once dirname(__DIR__) . '/config/db.php';
 require_once dirname(__DIR__) . '/includes/functions.php';
+require_once dirname(__DIR__) . '/includes/auth.php';
+
+requireLogin();
 
 $error = '';
 $course_name = '';

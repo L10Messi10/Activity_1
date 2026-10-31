@@ -1,6 +1,9 @@
 <?php
 require_once dirname(__DIR__) . '/config/db.php';
 require_once dirname(__DIR__) . '/includes/functions.php';
+require_once dirname(__DIR__) . '/includes/auth.php';
+
+requireLogin();
 
 $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 if (!$id) {
@@ -61,18 +64,22 @@ require dirname(__DIR__) . '/includes/header.php';
 <p><a href="index.php">&larr; Back to list</a></p>
 
 <?php if ($error): ?>
-    <div class="alert alert-danger"><?= e($error) ?><?php if ($error === 'Update failed.') print_r(sqlsrv_errors()); ?></div>
+    <div class="alert alert-danger"><?= e($error) ?><?php if ($error === 'Update failed.')
+          print_r(sqlsrv_errors()); ?>
+    </div>
 <?php endif; ?>
 
 <form method="post" action="edit.php?id=<?= e($course['course_id']) ?>" class="form-narrow">
     <input type="hidden" name="id" value="<?= e($course['course_id']) ?>">
     <div class="mb-3">
         <label class="form-label" for="course_name">Course Name (required, max 250):</label>
-        <input class="form-control" type="text" id="course_name" name="course_name" maxlength="250" required value="<?= e($course['course_name']) ?>">
+        <input class="form-control" type="text" id="course_name" name="course_name" maxlength="250" required
+            value="<?= e($course['course_name']) ?>">
     </div>
     <div class="mb-3">
         <label class="form-label" for="course_description">Description (optional, max 1000):</label>
-        <textarea class="form-control" id="course_description" name="course_description" rows="4" maxlength="1000"><?= e($course['course_description']) ?></textarea>
+        <textarea class="form-control" id="course_description" name="course_description" rows="4"
+            maxlength="1000"><?= e($course['course_description']) ?></textarea>
     </div>
     <button class="btn btn-success" type="submit">Update</button>
     <a class="btn btn-secondary" href="index.php">Cancel</a>
